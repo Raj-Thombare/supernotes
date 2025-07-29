@@ -12,14 +12,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -58,14 +56,15 @@ export function SignUpForm({
     },
   });
 
-  const signUp = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/dashboard",
-    });
-  };
+  // const signUp = async () => {
+  //   await authClient.signIn.social({
+  //     provider: "google",
+  //     callbackURL: "/dashboard",
+  //   });
+  // };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
     try {
       setIsLoading(true);
 
@@ -76,7 +75,7 @@ export function SignUpForm({
       );
 
       if (response.success) {
-        toast.success(response.message);
+        toast.success("Please check your email for verification.");
         router.push("/dashboard");
       } else {
         toast.error(response.message);
@@ -184,7 +183,7 @@ export function SignUpForm({
                   <Button
                     variant='outline'
                     className='w-full'
-                    onClick={signUp}
+                    // onClick={signUp}
                     type='button'>
                     Sign up with Google
                   </Button>
