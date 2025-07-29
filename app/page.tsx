@@ -7,11 +7,30 @@ import HeroSection from "@/components/hero-section";
 export default function Home() {
   return (
     <main>
-      <Header />
-      <HeroSection />
-      <Features />
-      <CallToAction />
-      <Footer />
+      <div className='min-h-screen w-full relative'>
+        <div
+          className='absolute inset-0 z-0 hidden dark:block'
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(251, 191, 36, 0.25), transparent 70%), #000000",
+          }}
+        />
+
+        <div
+          className='absolute inset-0 z-0 dark:hidden'
+          style={{
+            backgroundColor: "white",
+          }}
+        />
+
+        <Header />
+        <HeroSection />
+        <div className='relative z-10'>
+          <Features />
+          <CallToAction />
+          <Footer />
+        </div>
+      </div>
     </main>
   );
 }

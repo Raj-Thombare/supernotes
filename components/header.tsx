@@ -44,7 +44,7 @@ export default function Header() {
                   alt='SuperNotes Logo'
                   className='transition-transform duration-300'
                 />
-                <span className='text-2xl font-extrabold tracking-tight bg-gradient-to-r from-red-700 to-yellow-400 bg-clip-text text-transparent'>
+                <span className='text-2xl font-bold tracking-tight bg-gradient-to-r from-red-700 to-yellow-400 bg-clip-text text-transparent'>
                   SuperNotes
                 </span>
               </Link>
