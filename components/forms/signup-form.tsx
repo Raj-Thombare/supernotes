@@ -61,12 +61,12 @@ export function SignUpForm({
     },
   });
 
-  // const signUp = async () => {
-  //   await authClient.signIn.social({
-  //     provider: "google",
-  //     callbackURL: "/dashboard",
-  //   });
-  // };
+  const signUp = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    });
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -188,7 +188,7 @@ export function SignUpForm({
                   <Button
                     variant='outline'
                     className='w-full'
-                    // onClick={signUp}
+                    onClick={signUp}
                     type='button'>
                     Sign up with Google
                   </Button>
