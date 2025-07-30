@@ -23,67 +23,55 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { signUpUser } from "@/server/users";
 import { toast } from "sonner";
 
-const formSchema = z
-  .object({
-    name: z.string().min(3),
-    email: z.email(),
-    password: z.string().min(8),
-    confirmPassword: z.string().min(8),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match.",
-    path: ["confirm"],
-  });
+const formSchema = z.object({
+  password: z.string().min(8),
+  confirmPassword: z.string().min(8),
+});
 
-export function SignUpForm({
+export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") ?? undefined;
 
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
       password: "",
       confirmPassword: "",
     },
   });
 
-  // const signUp = async () => {
-  //   await authClient.signIn.social({
-  //     provider: "google",
-  //     callbackURL: "/dashboard",
-  //   });
-  // };
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     try {
       setIsLoading(true);
 
-      const response = await signUpUser(
-        values.email,
-        values.password,
-        values.name
-      );
+      if (values.password !== values.confirmPassword) {
+        toast.error("Passwords do not match.");
+        return;
+      }
 
-      if (response.success) {
-        toast.success("Please check your email for verification.");
-        router.push("/dashboard");
+      const { error } = await authClient.resetPassword({
+        newPassword: values.password,
+        token,
+      });
+
+      if (!error) {
+        toast.success("Password reset successfully");
+        router.push("/login");
       } else {
-        toast.error(response.message);
+        toast.error(error.message);
       }
     } catch (error) {
       console.log(error);
@@ -96,45 +84,15 @@ export function SignUpForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle>Create an account</CardTitle>
+          <CardTitle>Reset your password</CardTitle>
           <CardDescription>
-            Enter your details below to create an account
+            Enter your new password below to reset your password
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
               <div className='flex flex-col gap-6'>
-                <div className='grid gap-3'>
-                  <FormField
-                    control={form.control}
-                    name='name'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder='John Doe' {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className='grid gap-3'>
-                  <FormField
-                    control={form.control}
-                    name='email'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder='johndoe@example.com' {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
                 <div className='grid gap-3'>
                   <FormField
                     control={form.control}
@@ -182,23 +140,10 @@ export function SignUpForm({
                     {isLoading ? (
                       <Loader2 className='size-4 animate-spin' />
                     ) : (
-                      "Sign up"
+                      "Reset Password"
                     )}
                   </Button>
-                  <Button
-                    variant='outline'
-                    className='w-full'
-                    // onClick={signUp}
-                    type='button'>
-                    Sign up with Google
-                  </Button>
                 </div>
-              </div>
-              <div className='mt-4 text-center text-sm'>
-                Already have an account?{" "}
-                <Link href='/login' className='underline underline-offset-4'>
-                  Login
-                </Link>
               </div>
             </form>
           </Form>
