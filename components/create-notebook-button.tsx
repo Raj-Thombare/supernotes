@@ -1,0 +1,126 @@
+"use client";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { createNotebook } from "@/server/notebooks";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+
+const notebookSchema = z.object({
+  name: z.string().min(2).max(50),
+});
+
+export type CreateNotebookInput = z.infer<typeof notebookSchema>;
+
+const CreateNotebookButton = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof notebookSchema>>({
+    resolver: zodResolver(notebookSchema),
+    defaultValues: {
+      name: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof notebookSchema>) {
+    try {
+      setIsLoading(true);
+      const { data: session } = await authClient.getSession();
+
+      const userId = session?.user?.id;
+
+      if (!userId) {
+        toast.error("You must be logged in to create a notebook");
+        return;
+      }
+
+      const response = await createNotebook({
+        ...values,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      });
+
+      if (response.success) {
+        form.reset();
+        toast.success("Notebook created successfully");
+        router.refresh();
+        setIsOpen(false);
+      } else {
+        toast.error(response.message);
+      }
+    } catch {
+      toast.error("Failed to create notebook");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger>Create Notebook</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create Notebook</DialogTitle>
+          <DialogDescription>
+            Create a new notebook to store your notes.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+            <FormField
+              control={form.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder='My Notebook' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type='submit' disabled={isLoading}>
+              {isLoading ? (
+                <Loader2 className='size-4 animate-spin' />
+              ) : (
+                "Create Notebook"
+              )}
+            </Button>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default CreateNotebookButton;
