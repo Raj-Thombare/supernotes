@@ -1,11 +1,11 @@
 import { Logout } from "@/components/logout";
+import { PageWrapper } from "@/components/page-wrapper";
 import React from "react";
 
 export default function dashboard() {
   return (
-    <div>
+    <PageWrapper breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }]}>
       Dashboard
-      <Logout />
-    </div>
+    </PageWrapper>
   );
 }
