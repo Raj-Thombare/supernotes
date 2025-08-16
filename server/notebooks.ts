@@ -30,15 +30,46 @@ export const getNotebooks = async () => {
             return { success: false, message: "User not found" }
         }
 
-        const notebooks = await prisma.notebook.findMany({
+        const notebooksByUser = await prisma.notebook.findMany({
             where: {
                 userId: userId
+            },
+            include: {
+                notes: true
             }
         })
 
-        return { success: true, data: notebooks }
+        return { success: true, data: notebooksByUser }
     } catch {
         return { success: true, message: "Failed to get notebooks" }
+
+    }
+}
+
+export const getNotebookById = async (id: string) => {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers()
+        })
+
+        const userId = session?.user?.id;
+
+        if (!userId) {
+            return { success: false, message: "User not found" }
+        }
+
+        const notebook = await prisma.notebook.findFirst({
+            where: {
+                id: id
+            },
+            include: {
+                notes: true
+            }
+        })
+
+        return { success: true, data: notebook }
+    } catch {
+        return { success: true, message: "Failed to get notebook" }
 
     }
 }
@@ -68,7 +99,7 @@ export const updateNotebook = async (id: string, values: Prisma.NotebookUpdateIn
     }
 }
 
-export const deleteNotebook = async (notebookId: string) => {
+export const deleteNotebook = async (id: string) => {
     try {
         const session = await auth.api.getSession({
             headers: await headers()
@@ -82,7 +113,7 @@ export const deleteNotebook = async (notebookId: string) => {
 
         await prisma.notebook.delete({
             where: {
-                id: notebookId
+                id: id
             }
         })
 
