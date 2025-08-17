@@ -1,28 +1,18 @@
 import * as React from "react";
-import { ChevronRight, File } from "lucide-react";
 
 import { SearchForm } from "@/components/search-form";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { getNotebooks } from "@/server/notebooks";
 import Image from "next/image";
 import Link from "next/link";
 import SidebarData from "./sidebar-data";
+import { Suspense } from "react";
 
 export async function AppSidebar({
   ...props
@@ -52,9 +42,9 @@ export async function AppSidebar({
             SuperNotes
           </span>
         </Link>
-        <React.Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
           <SearchForm />
-        </React.Suspense>
+        </Suspense>
       </SidebarHeader>
       <SidebarContent className='gap-0'>
         <SidebarData data={data} />
