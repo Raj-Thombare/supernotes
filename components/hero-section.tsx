@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { TextEffect } from "@/components/ui/text-effect";
 import { AnimatedGroup } from "@/components/ui/animated-group";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 const transitionVariants = {
   item: {
@@ -25,7 +27,11 @@ const transitionVariants = {
   },
 };
 
-export default function HeroSection() {
+export default async function HeroSection() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   return (
     <>
       <main className='overflow-hidden'>
@@ -80,7 +86,7 @@ export default function HeroSection() {
                       asChild
                       size='lg'
                       className='rounded-xl px-5 text-base'>
-                      <Link href='/dashboard'>
+                      <Link href={`${session ? "/dashboard" : "/login"}`}>
                         <span className='text-nowrap'>Get Started</span>
                       </Link>
                     </Button>

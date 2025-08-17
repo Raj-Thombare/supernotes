@@ -8,11 +8,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SidebarProvider>
+    <SidebarProvider>
+      <Suspense>
         <AppSidebar />
-        <main className='flex-1'>{children}</main>
-      </SidebarProvider>
-    </Suspense>
+      </Suspense>
+      <main className='flex-1'>{children}</main>
+    </SidebarProvider>
   );
 }
