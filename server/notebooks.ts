@@ -13,7 +13,7 @@ export const createNotebook = async (values: Prisma.NotebookCreateInput) => {
 
         return { success: true, message: "Notebook created successfully" }
     } catch {
-        return { success: true, message: "Failed to create notebook" }
+        return { success: false, message: "Failed to create notebook" }
 
     }
 }
@@ -41,7 +41,7 @@ export const getNotebooks = async () => {
 
         return { success: true, data: notebooksByUser }
     } catch {
-        return { success: true, message: "Failed to get notebooks" }
+        return { success: false, message: "Failed to get notebooks" }
 
     }
 }
@@ -69,7 +69,7 @@ export const getNotebookById = async (id: string) => {
 
         return { success: true, data: notebook }
     } catch {
-        return { success: true, message: "Failed to get notebook" }
+        return { success: false, message: "Failed to get notebook" }
 
     }
 }
@@ -95,7 +95,7 @@ export const updateNotebook = async (id: string, values: Prisma.NotebookUpdateIn
 
         return { success: true, message: "Notebook updated successfully" }
     } catch {
-        return { success: true, message: "Failed to update notebook" }
+        return { success: false, message: "Failed to update notebook" }
     }
 }
 
@@ -119,7 +119,7 @@ export const deleteNotebook = async (id: string) => {
 
         return { success: true, message: "Notebook deleted successfully" }
     } catch {
-        return { success: true, message: "Failed to delete notebook" }
+        return { success: false, message: "Failed to delete notebook" }
 
     }
 }

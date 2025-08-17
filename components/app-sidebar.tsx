@@ -1,8 +1,7 @@
 import * as React from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, File } from "lucide-react";
 
 import { SearchForm } from "@/components/search-form";
-import { VersionSwitcher } from "@/components/version-switcher";
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,6 +20,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { getNotebooks } from "@/server/notebooks";
+import Image from "next/image";
+import Link from "next/link";
 
 export async function AppSidebar({
   ...props
@@ -35,7 +36,7 @@ export async function AppSidebar({
         url: `/dashboard/${notebook.id}`,
         items: notebook.notes.map((note) => ({
           title: note.title,
-          url: `/dashboard/note/${note.id}`,
+          url: `/dashboard/notebook/${notebook.id}/note/${note.id}`,
         })),
       })) ?? []),
     ],
@@ -44,10 +45,12 @@ export async function AppSidebar({
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        />
+        <Link href='/' className='flex items-center gap-2 p-2'>
+          <Image src='/logo.png' alt='SuperNotes Logo' width={32} height={32} />
+          <span className='text-xl font-bold tracking-tight bg-gradient-to-r from-red-700 to-yellow-400 bg-clip-text text-transparent'>
+            SuperNotes
+          </span>
+        </Link>
         <SearchForm />
       </SidebarHeader>
       <SidebarContent className='gap-0'>
@@ -75,7 +78,10 @@ export async function AppSidebar({
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>
-                          <a href={item.url}>{item.title}</a>
+                          <a href={item.url}>
+                            <File />
+                            {item.title}
+                          </a>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}

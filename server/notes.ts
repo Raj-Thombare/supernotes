@@ -5,18 +5,23 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { Prisma } from "@prisma/client";
 
-export const createNote = async (values: Prisma.NoteCreateInput) => {
+export const createNote = async (values: { title: string; content: any; notebookId: string }) => {
     try {
         await prisma.note.create({
-            data: values
-        })
+            data: {
+                title: values.title,
+                content: values.content,
+                notebook: {
+                    connect: { id: values.notebookId },
+                },
+            },
+        });
 
-        return { success: true, message: "Note created successfully" }
+        return { success: true, message: "Note created successfully" };
     } catch {
-        return { success: true, message: "Failed to create note" }
-
+        return { success: false, message: "Failed to create note" };
     }
-}
+};
 
 export const getNoteById = async (id: string) => {
     try {
@@ -41,7 +46,7 @@ export const getNoteById = async (id: string) => {
 
         return { success: true, data: notes }
     } catch {
-        return { success: true, message: "Failed to get note" }
+        return { success: false, message: "Failed to get note" }
 
     }
 }
@@ -67,7 +72,7 @@ export const updateNote = async (id: string, values: Partial<Prisma.NoteUpdateIn
 
         return { success: true, message: "Note updated successfully" }
     } catch {
-        return { success: true, message: "Failed to update note" }
+        return { success: false, message: "Failed to update note" }
     }
 }
 
@@ -91,7 +96,7 @@ export const deleteNote = async (id: string) => {
 
         return { success: true, message: "Note deleted successfully" }
     } catch {
-        return { success: true, message: "Failed to delete note" }
+        return { success: false, message: "Failed to delete note" }
 
     }
 }

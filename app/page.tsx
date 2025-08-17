@@ -3,8 +3,14 @@ import Features from "@/components/features";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import HeroSection from "@/components/hero-section";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   return (
     <main>
       <div className='min-h-screen w-full relative'>
@@ -23,7 +29,7 @@ export default function Home() {
           }}
         />
 
-        <Header />
+        <Header session={session} />
         <HeroSection />
         <div className='relative z-10'>
           <Features />

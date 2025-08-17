@@ -69,7 +69,6 @@ export function SignUpForm({
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
     try {
       setIsLoading(true);
 

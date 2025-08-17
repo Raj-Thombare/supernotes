@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Logo } from "@/components/logo";
-import { GitBranchPlus, Github, GithubIcon, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { cn } from "@/lib/utils";
@@ -9,7 +8,7 @@ import { useScroll } from "motion/react";
 import { ModeToggle } from "./mode-toggle";
 import Image from "next/image";
 
-export default function Header() {
+export default function Header({ session }: { session: any }) {
   const [menuState, setMenuState] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
 
@@ -75,16 +74,26 @@ export default function Header() {
                 <ModeToggle />
               </div>
               <div className='flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit'>
-                <Button asChild variant='outline' size='sm'>
-                  <Link href='/login'>
-                    <span>Login</span>
-                  </Link>
-                </Button>
-                <Button asChild size='sm'>
-                  <Link href='/signup'>
-                    <span>Sign Up</span>
-                  </Link>
-                </Button>
+                {session ? (
+                  <Button asChild variant='outline' size='sm'>
+                    <Link href='/dashboard'>
+                      <span>Dashboard</span>
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button asChild variant='outline' size='sm'>
+                      <Link href='/login'>
+                        <span>Login</span>
+                      </Link>
+                    </Button>
+                    <Button asChild size='sm'>
+                      <Link href='/signup'>
+                        <span>Sign Up</span>
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
